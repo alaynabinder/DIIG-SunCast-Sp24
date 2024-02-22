@@ -1,0 +1,82 @@
+---
+title: "eda"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(dplyr)
+
+linkedin <- read_csv("data/linkedin_followers.csv")
+```
+
+```{r}
+#| label: clean-data
+
+# much more can be done here -- just a small starting point
+
+
+# total months in position = year * 12 + months
+linkedin <- linkedin |>
+  mutate(`Total Months in Position` = `Years in Position`*12 + `Months in Position`)
+
+# total months in company = year * 12 + months
+linkedin <- linkedin |>
+  mutate(`Total Months in Company` = `Years in Company`*12 + `Months in Company`)
+
+# there seems to be outliers in total months in company,
+# with max at 24,356 = 2000+ years, then 2,505 = 200+ years
+# likely some other outliers too...
+linkedin$`Total Months in Company`[linkedin$`Total Months in Company` %in% c(24356, 2505)] <- NA
+
+```
+
+```{r}
+
+### Basic Audience Demographics
+# ------
+
+## Gender
+linkedin |>
+  ggplot(aes(x = `Total Months in Position`)) +
+  geom_bar() +
+  labs(title = "Distribution of Total Months in Position",
+       x = "Total Months in Position", y = "Count")
+
+summary(linkedin$`Male or Female`)
+
+# ------
+
+## Total Months in Position
+linkedin |>
+  ggplot(aes(x = `Total Months in Position`)) +
+  geom_bar() +
+  labs(title = "Distribution of Total Months in Position",
+       x = "Total Months in Position", y = "Count")
+
+summary(linkedin$`Total Months in Position`)
+
+# ------
+
+## Total Months in Company
+linkedin |>
+  ggplot(aes(x = `Total Months in Company`)) +
+  geom_bar() +
+  labs(title = "Distribution of Total Months in Company",
+       x = "Total Months in Company", y = "Count")
+
+summary(linkedin$`Total Months in Company`)
+
+```
+
+```{r}
+
+# maybe also explore relevancy: whether the user and their company are categorized as 'not relevant', i.e. how many are actually relevant?
+# visualize distribution among different sectors for user and company
+# etc...
+
+```
+
